@@ -2,8 +2,12 @@ package bi.zum.lab3;
 
 import cz.cvut.fit.zum.api.ga.AbstractEvolution;
 import cz.cvut.fit.zum.api.ga.AbstractIndividual;
+import cz.cvut.fit.zum.data.Edge;
 import cz.cvut.fit.zum.data.StateSpace;
 import cz.cvut.fit.zum.util.Pair;
+
+import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -13,36 +17,32 @@ public class Individual extends AbstractIndividual {
 
     private double fitness = Double.NaN;
     private AbstractEvolution evolution;
-    
-    
+
+
     // @TODO Declare your genotype
-    
+    private boolean[] genotype = new boolean[StateSpace.nodesCount()];
+
 
     /**
      * Creates a new individual
-     * 
-     * @param evolution The evolution object
+     *
+     * @param evolution  The evolution object
      * @param randomInit <code>true</code> if the individial should be
-     * initialized randomly (we do wish to initialize if we copy the individual)
+     *                   initialized randomly (we do wish to initialize if we copy the individual)
      */
     public Individual(AbstractEvolution evolution, boolean randomInit) {
         this.evolution = evolution;
-        
-        if(randomInit) {
+        if (randomInit) {
+            for (int i = 0; i < genotype.length; i++) {
+                genotype[i] = new Random().nextBoolean();
+            }
 
-            // @TODO initialize individual
-            
         }
     }
 
     @Override
     public boolean isNodeSelected(int j) {
-        
-        
-        // @TODO Implement based on your individual's genotype
-        
-        
-        return false;
+        return genotype[j];
     }
 
     /**
@@ -52,12 +52,20 @@ public class Individual extends AbstractIndividual {
      */
     @Override
     public void computeFitness() {
-        
-        
+
+
         // @TODO: Implement fitness based on your implementation
         // Hint: use the StateSpace object
-        
-        this.fitness = Double.NaN; // this is wrong!
+        int numCoveredEdges = 0;
+        for (Edge edge : StateSpace.getEdges()) {
+            if(genotype[edge.getFromId()] || genotype[edge.getToId()]){
+                numCoveredEdges++;
+            }
+        }
+        //todo count num nodes
+        int dif = StateSpace.edgesCount() - numCoveredEdges;
+    //todo
+        this.fitness = dif;
     }
 
     /**
@@ -73,39 +81,39 @@ public class Individual extends AbstractIndividual {
     /**
      * Does random changes in the individual's genotype, taking mutation
      * probability into account.
-     * 
+     *
      * @param mutationRate Probability of a bit being inverted, i.e. a node
-     * being added to/removed from the vertex cover.
+     *                     being added to/removed from the vertex cover.
      */
     @Override
     public void mutate(double mutationRate) {
-        
-        
+
+
         // TODO: Implement mutation of the genotype
-        
-        
+
+
     }
-    
+
     /**
      * Crosses the current individual over with other individual given as a
      * parameter, yielding a pair of offsprings.
-     * 
+     *
      * @param other The other individual to be crossed over with
      * @return A couple of offspring individuals
      */
     @Override
     public Pair crossover(AbstractIndividual other) {
-
-        Pair<Individual,Individual> result = new Pair();
+        Pair<Individual, Individual> result = new Pair<>();
+        Individual otherIndividual = (Individual) other;
 
         // @TODO implement your own crossover
         result.a = null;
         result.b = null;
-        
+
         return result;
     }
 
-    
+
     /**
      * When you are changing an individual (eg. at crossover) you probably don't
      * want to affect the old one (you don't want to destruct it). So you have
@@ -116,7 +124,9 @@ public class Individual extends AbstractIndividual {
     @Override
     public Individual deepCopy() {
         Individual newOne = new Individual(evolution, false);
-       
+        for (int i = 0; i < genotype.length; i++) {
+            newOne.genotype[i] = genotype[i];
+        }
 
         // TODO: at least you should copy your representation of search-space state
 
@@ -152,15 +162,16 @@ public class Individual extends AbstractIndividual {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        
-        
+
+
         /* TODO: implement own string representation, such as a comma-separated
          * list of indices of nodes in the vertex cover
          */
-        
-        
+
+
         sb.append(super.toString());
 
         return sb.toString();
     }
+
 }

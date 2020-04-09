@@ -1,9 +1,6 @@
-*.class
-
-# Package Files #
-#*.jar
-*.war
-*.ear
-dist/**
-build/**
-nbproject/private/**
+.class
+.idea
+build
+out
+nbproject
+.idea/workspace.xml
