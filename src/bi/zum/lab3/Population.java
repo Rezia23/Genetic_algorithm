@@ -29,18 +29,34 @@ public class Population extends AbstractPopulation {
      */
     public List<AbstractIndividual> selectIndividuals(int count) {
         ArrayList<AbstractIndividual> selected = new ArrayList<AbstractIndividual>();
-
         // example of random selection of N individuals
-        Random r = new Random();
-        AbstractIndividual individual = individuals[r.nextInt(individuals.length)];
-        while (selected.size() < count) {
-            selected.add(individual);
-            individual = individuals[r.nextInt(individuals.length)];
-        }
-        
+//        Random r = new Random();
+//        AbstractIndividual individual = individuals[r.nextInt(individuals.length)];
+//        while (selected.size() < count) {
+//            selected.add(individual);
+//            individual = individuals[r.nextInt(individuals.length)];
+//        }
+//
         // TODO: implement your own (and better) method of selection
+        double sumFitnesses = 0;
+        for (int i = 0; i < individuals.length; i++) {
+            sumFitnesses += individuals[i].getFitness();
+        }
+        double [] probabilities = new double[individuals.length];
+        double sumOfProbabilities = 0;
+        for (int i = 0; i < individuals.length; i++) {
+            probabilities[i] = sumOfProbabilities + (individuals[i].getFitness()/sumFitnesses);
+            sumOfProbabilities+=probabilities[i];
+        }
+        while(selected.size() < count){
+            double rand = new Random().nextDouble();
+            for (int i = 0; i < probabilities.length; i++) {
+                if(rand > probabilities[i%probabilities.length] && rand < probabilities[(i+1)%probabilities.length]){
+                    selected.add(individuals[i]);
+                }
 
-        
+            }
+        }
         return selected;
     }
 }

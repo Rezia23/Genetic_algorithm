@@ -72,7 +72,6 @@ public class Evolution extends AbstractEvolution<Individual> implements Runnable
         
         // Run evolution cycle for the number of generations set in GUI
         for(int g=0; g < generations; g++) {
-
             // the evolution may be terminate from the outside using GUI button
             if (isFinished) {
                 break;
